@@ -6,6 +6,9 @@
     <title>Venkatesh T - Geospatial Product Specialist</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #dc2626;
@@ -64,14 +67,12 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary);
-            text-decoration: none;
-            cursor: pointer;
         }
 
         .nav-links {
             display: flex;
             list-style: none;
-            gap: 1.5rem;
+            gap: 2rem;
         }
 
         .nav-links a {
@@ -80,31 +81,15 @@
             font-weight: 500;
             transition: color 0.3s ease;
             cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
         }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: white;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-
-        /* Page Container */
-        .page-container {
-            min-height: 100vh;
-            padding-top: 80px;
-            display: none;
-        }
-
-        .page-container.active {
-            display: block;
+        .nav-links a:hover {
+            color: var(--secondary);
         }
 
         /* Hero Section */
         .hero {
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -212,10 +197,10 @@
             box-shadow: 0 10px 30px var(--shadow);
         }
 
-        /* Quick Links Section */
-        .quick-links {
+        /* Map Section */
+        .map-section {
             padding: 5rem 0;
-            background: var(--card-bg);
+            background: linear-gradient(135deg, #fef3c7 0%, #dbeafe 50%, #fecaca 100%);
         }
 
         .container {
@@ -239,317 +224,420 @@
             font-size: 1.1rem;
         }
 
-        .overview-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .overview-text h3 {
-            color: var(--secondary);
-            font-size: 1.5rem;
-            margin: 2rem 0 1rem 0;
-            font-weight: 600;
-        }
-
-        .overview-text p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        .key-strengths {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .strength-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            border-left: 4px solid var(--primary);
-            box-shadow: 0 2px 8px var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .strength-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px var(--shadow);
-        }
-
-        .strength-item i {
-            font-size: 1.5rem;
-            color: var(--primary);
-        }
-
-        .strength-item span {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Stats Section */
-        .stats {
-            padding: 5rem 0;
-            background: linear-gradient(135deg, #fef3c7 0%, #dbeafe 50%, #fecaca 100%);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.8);
+        #map {
+            height: 500px;
             border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        /* Page Content Styles */
-        .page-content {
-            padding: 3rem 0;
-            min-height: 80vh;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 3rem 0;
-            background: linear-gradient(135deg, #dbeafe 0%, #fef3c7 50%, #fecaca 100%);
-        }
-
-        .page-header h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .page-header p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-        }
-
-        /* Coming Soon Styles */
-        .coming-soon {
-            text-align: center;
-            padding: 5rem 2rem;
-        }
-
-        .coming-soon-icon {
-            font-size: 5rem;
-            color: var(--accent);
-            margin-bottom: 2rem;
-        }
-
-        .coming-soon h2 {
-            font-size: 2.5rem;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-
-        .coming-soon p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        /* Publications Specific Styles */
-        .publication-preview {
-            margin: 3rem 0;
-        }
-
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .preview-item {
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .preview-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px var(--shadow);
-        }
-
-        .preview-item i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .preview-item h4 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .preview-item p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .research-interests {
-            margin: 4rem 0;
-        }
-
-        .research-interests h3 {
-            color: var(--text-primary);
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-        }
-
-        .interests-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .interest-tag {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .interest-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--shadow);
-        }
-
-        .collaboration-note {
-            background: rgba(59, 130, 246, 0.1);
-            padding: 2rem;
-            border-radius: 15px;
-            border-left: 4px solid var(--secondary);
-            margin-top: 3rem;
-        }
-
-        .collaboration-note p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin: 0;
-        }
-
-        .collaboration-note .contact-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .collaboration-note .contact-link:hover {
-            color: var(--secondary);
-        }
-
-        /* Project Image Styles */
-        .project-image {
-            width: 100%;
-            height: 200px;
-            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 1.5rem;
-            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        .project-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
+        /* Experience Section */
+        .experience {
+            padding: 5rem 0;
+            background: var(--light-bg);
         }
 
-        .project-image:hover img {
-            transform: scale(1.05);
+        .experience-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
         }
 
-        .project-image-placeholder {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--light-bg), var(--border-light));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            border: 2px dashed var(--border-light);
+        .experience-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow);
+            border: 1px solid var(--border-light);
         }
 
-        .project-image-placeholder i {
-            font-size: 2rem;
+        .experience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .experience-card h3 {
+            color: var(--secondary);
+            font-size: 1.3rem;
             margin-bottom: 0.5rem;
+        }
+
+        .experience-card .company {
             color: var(--accent);
-        }
-
-        .project-image-placeholder span {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--text-primary);
-            color: white;
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: auto;
-        }
-
-        .footer p {
+            font-weight: 600;
             margin-bottom: 1rem;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
+        .experience-card .achievements {
+            list-style: none;
             margin-top: 1rem;
         }
 
-        .footer-links a {
+        .experience-card .achievements li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .experience-card .achievements li::before {
+            content: '▶';
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Skills Section */
+        .skills {
+            padding: 5rem 0;
+            background: var(--card-bg);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .skills-visualization {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .skill-meter {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px var(--shadow);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .skill-meter:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px var(--shadow);
+        }
+
+        .skill-meter h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .skill-progress {
+            background: var(--border-light);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 2s ease-in-out;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .skill-percentage {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, var(--secondary-light), var(--accent-light));
+            color: var(--text-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .skill-tag:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 8px 20px var(--shadow);
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+        }
+
+        /* Projects Section */
+        .projects {
+            padding: 5rem 0;
+            background: var(--light-bg);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--secondary);
+            box-shadow: 0 25px 50px var(--shadow);
+        }
+
+        .project-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .project-card h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card .tech-stack {
             color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .project-body {
+            padding: 2rem;
+        }
+
+        .project-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-metrics {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric {
+            text-align: center;
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Blog Section */
+        .blog {
+            padding: 5rem 0;
+            background: var(--card-bg);
+        }
+
+        .blog-placeholder {
+            text-align: center;
+            padding: 3rem;
+            background: var(--dark-bg);
+            border-radius: 15px;
+            border: 2px dashed var(--primary-light);
+        }
+
+        .blog-placeholder i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        /* Education Section */
+        .education {
+            padding: 5rem 0;
+            background: var(--card-bg);
+        }
+
+        .education-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .education-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px var(--shadow);
+            border: 1px solid var(--border-light);
+        }
+
+        .education-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .education-card h3 {
+            color: var(--secondary);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .education-card .institution {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .education-card .duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .education-card .location {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Experience Section Updates */
+        .experience-card .location {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Certifications Section */
+        .certifications {
+            padding: 5rem 0;
+            background: var(--light-bg);
+        }
+
+        .certifications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .cert-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .cert-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-light);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .cert-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .cert-card h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-issuer {
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-date {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .cert-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Skills Section Updates */
+        .skills-categories {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .skill-category {
+            margin-bottom: 2rem;
+        }
+
+        .skill-category h4 {
+            color: var(--secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .skill-category .skills-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 0;
+            background: var(--card-bg);
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
-        .footer-links a:hover {
-            color: white;
+        .contact-item:hover {
+            color: var(--secondary);
         }
 
         /* Responsive Design */
@@ -562,8 +650,8 @@
                 font-size: 2.5rem;
             }
 
-            .page-header h1 {
-                font-size: 2rem;
+            .skills-grid {
+                grid-template-columns: 1fr;
             }
 
             .cta-buttons {
@@ -571,29 +659,15 @@
                 align-items: center;
             }
 
-            .preview-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .interests-list {
-                justify-content: flex-start;
+            .contact-info {
+                flex-direction: column;
+                align-items: center;
             }
         }
 
-        /* Page transition effects */
-        .page-container {
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
 
         /* Loading animation */
@@ -610,2171 +684,830 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* Education Timeline Styles */
-        .education-timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .education-timeline::before {
-            content: '';
-            position: absolute;
-            left: 30px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-        }
-
-        .education-item {
-            display: flex;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .education-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin-right: 2rem;
-            z-index: 2;
-            box-shadow: 0 4px 15px var(--shadow);
-        }
-
-        .education-content {
-            flex: 1;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
-            border-left: 4px solid var(--primary);
-        }
-
-        .education-content h3 {
-            color: var(--primary);
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .education-content h4 {
-            color: var(--secondary);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .education-period {
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .education-highlights {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .highlight-tag {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Experience Timeline Styles */
-        .experience-timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .experience-timeline::before {
-            content: '';
-            position: absolute;
-            left: 30px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-        }
-
-        .experience-item {
-            display: flex;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .experience-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin-right: 2rem;
-            z-index: 2;
-            box-shadow: 0 4px 15px var(--shadow);
-        }
-
-        .experience-content {
-            flex: 1;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px var(--shadow);
-            border-left: 4px solid var(--primary);
-        }
-
-        .experience-content h3 {
-            color: var(--primary);
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .experience-content h4 {
-            color: var(--secondary);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .experience-period {
-            color: var(--accent);
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-
-        .experience-location {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .achievements {
-            margin: 1.5rem 0;
-        }
-
-        .achievements h5 {
-            color: var(--text-primary);
-            margin-bottom: 0.8rem;
-        }
-
-        .achievements ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .achievements li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .achievements li::before {
-            content: '▶';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-size: 0.8rem;
-        }
-
-        .tech-stack {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .tech-tag {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        /* Projects Grid Styles */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .project-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 4px 15px var(--shadow);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-light);
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px var(--shadow);
-        }
-
-        .project-card.featured {
-            border: 2px solid var(--accent);
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.05), rgba(239, 68, 68, 0.05));
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .project-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.3rem;
-        }
-
-        .project-status {
-            background: var(--accent);
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .project-card h3 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        .project-metrics {
-            display: flex;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            flex-wrap: wrap;
-        }
-
-        .metric {
-            text-align: center;
-            flex: 1;
-            min-width: 80px;
-        }
-
-        .metric-value {
-            display: block;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .metric-label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        /* Certifications Styles */
-        .certifications-categories {
-            margin-top: 2rem;
-        }
-
-        .cert-category {
-            margin-bottom: 3rem;
-        }
-
-        .cert-category h3 {
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .cert-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .cert-card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px var(--shadow);
-            transition: all 0.3s ease;
-            border-left: 4px solid var(--primary);
-        }
-
-        .cert-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px var(--shadow);
-        }
-
-        .cert-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cert-icon.google { background: linear-gradient(135deg, #4285f4, #34a853); }
-        .cert-icon.microsoft { background: linear-gradient(135deg, #0078d4, #106ebe); }
-        .cert-icon.nasa { background: linear-gradient(135deg, #fc3d21, #ff6347); }
-        .cert-icon.esa { background: linear-gradient(135deg, #003d82, #0066cc); }
-        .cert-icon.isro { background: linear-gradient(135deg, #ff9933, #138808); }
-        .cert-icon.who { background: linear-gradient(135deg, #009cde, #0066cc); }
-        .cert-icon.un { background: linear-gradient(135deg, #009edb, #40bfff); }
-        .cert-icon.aws { background: linear-gradient(135deg, #ff9900, #ffb84d); }
-        .cert-icon.docker { background: linear-gradient(135deg, #2496ed, #0db7ed); }
-        .cert-icon.python { background: linear-gradient(135deg, #3776ab, #ffd43b); }
-
-        .cert-card h4 {
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .cert-date {
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Skills Styles */
-        .skills-categories {
-            margin-top: 2rem;
-        }
-
-        .skill-category {
-            margin-bottom: 3rem;
-        }
-
-        .skill-category h3 {
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .skills-grid {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .skill-item {
-            background: var(--card-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px var(--shadow);
-        }
-
-        .skill-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .skill-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .skill-level {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .skill-bar {
-            height: 6px;
-            background: var(--border-light);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .skill-progress {
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 3px;
-            transition: width 1s ease-in-out;
-        }
-
-        /* Contact Styles */
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .contact-methods {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .contact-method {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .contact-method:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px var(--shadow);
-        }
-
-        .contact-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.3rem;
-        }
-
-        .contact-details h4 {
-            color: var(--text-primary);
-            margin-bottom: 0.3rem;
-        }
-
-        .contact-details p {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .contact-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .contact-link:hover {
-            color: var(--secondary);
-        }
-
-        .contact-form-section h3 {
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
-        }
-
-        .contact-form {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            color: var(--text-primary);
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 0.8rem;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            font-family: inherit;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-note {
-            background: rgba(251, 191, 36, 0.1);
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent);
-            margin-top: 1rem;
-        }
-
-        .form-note p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin: 0;
-        }
-
-        .collaboration-areas {
-            margin-top: 3rem;
-        }
-
-        .collaboration-areas h3 {
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .collab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .collab-item {
-            text-align: center;
-            padding: 1.5rem;
-            background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px var(--shadow);
-            transition: all 0.3s ease;
-        }
-
-        .collab-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px var(--shadow);
-        }
-
-        .collab-item i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .collab-item h4 {
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .collab-item p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .education-timeline::before,
-            .experience-timeline::before {
-                left: 15px;
-            }
-
-            .education-icon,
-            .experience-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-                margin-right: 1rem;
-            }
-
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cert-grid {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo" onclick="showPage('home')">VT</a>
+            <div class="logo">VT</div>
             <ul class="nav-links">
-                <li><a href="#" onclick="showPage('home')" class="nav-link active">Home</a></li>
-                <li><a href="#" onclick="showPage('education')" class="nav-link">Education</a></li>
-                <li><a href="#" onclick="showPage('experience')" class="nav-link">Experience</a></li>
-                <li><a href="#" onclick="showPage('projects')" class="nav-link">Projects</a></li>
-                <li><a href="#" onclick="showPage('publications')" class="nav-link">Publications</a></li>
-                <li><a href="#" onclick="showPage('certifications')" class="nav-link">Certifications</a></li>
-                <li><a href="#" onclick="showPage('skills')" class="nav-link">Skills</a></li>
-                <li><a href="#" onclick="showPage('contact')" class="nav-link">Contact</a></li>
+                <li><a onclick="scrollToSection('hero')">Home</a></li>
+                <li><a onclick="scrollToSection('education')">Education</a></li>
+                <li><a onclick="scrollToSection('experience')">Experience</a></li>
+                <li><a onclick="scrollToSection('projects')">Projects</a></li>
+                <li><a onclick="scrollToSection('certifications')">Certifications</a></li>
+                <li><a onclick="scrollToSection('skills')">Skills</a></li>
+                <li><a onclick="scrollToSection('contact')">Contact</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Home Page -->
-    <div id="home-page" class="page-container active">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <div class="profile-placeholder">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h1>Venkatesh T</h1>
-                <div class="title">Geospatial Product Specialist</div>
-                <div class="location">
-                    <i class="fas fa-map-marker-alt"></i> Madurai, Tamil Nadu, India
-                </div>
-                <p class="summary">
-                    GIS Analyst specializing in transforming complex spatial data into actionable intelligence and high-performance systems. Expert in the full geospatial stack, from building scalable data pipelines and AI models to developing interactive dashboards and maps.
-                </p>
-                <div class="cta-buttons">
-                    <a href="mailto:thiruvenkatesh4@gmail.com" class="btn btn-primary">
-                        <i class="fas fa-envelope"></i> Get In Touch
-                    </a>
-                    <a href="https://www.linkedin.com/in/venkatesh-t-6b06ba357/" target="_blank" class="btn btn-secondary">
-                        <i class="fab fa-linkedin"></i> LinkedIn
-                    </a>
-                </div>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <div class="profile-placeholder">
+                <i class="fas fa-user"></i>
             </div>
-        </section>
-
-        <!-- Professional Summary Section -->
-        <section class="quick-links">
-            <div class="container">
-                <h2 class="section-title">Professional Overview</h2>
-                <p class="section-subtitle">Transforming geospatial data into actionable intelligence through innovative technology solutions</p>
-                
-                <div class="overview-content">
-                    <div class="overview-text">
-                        <h3>What I Do</h3>
-                        <p>I specialize in building end-to-end geospatial solutions that bridge the gap between complex spatial data and business intelligence. My expertise spans from architecting scalable data pipelines to developing AI-powered analytics platforms.</p>
-                        
-                        <h3>My Approach</h3>
-                        <p>I believe in creating systems that not only solve today's problems but scale for tomorrow's challenges. Every project combines technical excellence with practical business impact.</p>
-                        
-                        <div class="key-strengths">
-                            <div class="strength-item">
-                                <i class="fas fa-database"></i>
-                                <span>Data Engineering & Architecture</span>
-                            </div>
-                            <div class="strength-item">
-                                <i class="fas fa-brain"></i>
-                                <span>AI/ML for Geospatial Analytics</span>
-                            </div>
-                            <div class="strength-item">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Performance Optimization</span>
-                            </div>
-                            <div class="strength-item">
-                                <i class="fas fa-users"></i>
-                                <span>Cross-functional Leadership</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <h1>Venkatesh T</h1>
+            <div class="title">Geospatial Product Specialist</div>
+            <div class="location">
+                <i class="fas fa-map-marker-alt"></i> Madurai, Tamil Nadu, India
             </div>
-        </section>
-
-        <!-- Stats Section -->
-        <section class="stats">
-            <div class="container">
-                <h2 class="section-title">Professional Highlights</h2>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">5+</div>
-                        <div class="stat-label">Years Experience</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">20+</div>
-                        <div class="stat-label">Major Projects</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">25+</div>
-                        <div class="stat-label">Certifications</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">3</div>
-                        <div class="stat-label">Research Papers</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <!-- Education Page -->
-    <div id="education-page" class="page-container">
-        <div class="page-header">
-            <h1>Education</h1>
-            <p>Academic journey and continuous learning in geospatial sciences</p>
-        </div>
-        <div class="container">
-            <div class="education-timeline">
-                <div class="education-item">
-                    <div class="education-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="education-content">
-                        <h3>Executive Certificate Programme in Corporate & Strategic Finance</h3>
-                        <h4>Indian Institute of Management, Mumbai</h4>
-                        <div class="education-period">May 2024 - Present</div>
-                        <p>Advanced executive education in corporate finance, strategic financial management, and business analytics. Developing expertise in financial modeling and strategic decision-making for technology ventures.</p>
-                        <div class="education-highlights">
-                            <span class="highlight-tag">Corporate Finance</span>
-                            <span class="highlight-tag">Strategic Management</span>
-                            <span class="highlight-tag">Financial Modeling</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="education-item">
-                    <div class="education-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="education-content">
-                        <h3>Master of Technology (MTech) in Geoinformatics</h3>
-                        <h4>Bharathidasan University, Tiruchirappalli</h4>
-                        <div class="education-period">Jul 2021 - Jul 2023</div>
-                        <p>Specialized in advanced geospatial technologies, remote sensing, and GIS applications. Developed expertise in spatial data analysis, cartography, and geospatial programming with focus on modern data engineering approaches.</p>
-                        <div class="education-highlights">
-                            <span class="highlight-tag">Geospatial Analysis</span>
-                            <span class="highlight-tag">Remote Sensing</span>
-                            <span class="highlight-tag">Data Engineering</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="education-item">
-                    <div class="education-icon">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="education-content">
-                        <h3>Master's of Science (5 Year Integrated) in Geology/Earth Science</h3>
-                        <h4>Bharathidasan University, Tiruchirappalli</h4>
-                        <div class="education-period">2015 - 2020</div>
-                        <p>Comprehensive foundation in earth sciences, geological processes, and environmental systems. Built strong analytical and field research skills essential for geospatial applications and environmental analysis.</p>
-                        <div class="education-highlights">
-                            <span class="highlight-tag">Earth Sciences</span>
-                            <span class="highlight-tag">Environmental Analysis</span>
-                            <span class="highlight-tag">Field Research</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Experience Page -->
-    <div id="experience-page" class="page-container">
-        <div class="page-header">
-            <h1>Professional Experience</h1>
-            <p>Career progression and key achievements in geospatial technology</p>
-        </div>
-        <div class="container">
-            <div class="experience-timeline">
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-shipping-fast"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>Product Operations Specialist</h3>
-                        <h4>Zepto HQ</h4>
-                        <div class="experience-period">May 2025 - July 2025</div>
-                        <div class="experience-location">Bengaluru, Karnataka, India</div>
-                        <p>Architected high-performance geospatial systems for Zepto's delivery platform, focusing on routing optimization and address resolution systems.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Architected reverse geocoding system for Zepto Maps, reducing address resolution latency by 5x (P99: 45ms vs Google's 250ms)</li>
-                                <li>Expanded serviceable area by preparing Master Geodatabase, increasing order coverage via polygons from 14 regions</li>
-                                <li>Optimized routing algorithms, reducing Last-Mile + Last-Leg-Mile time by 16 seconds (P90: 44 seconds) and cutting delivery distance by 8.1%</li>
-                                <li>Designed Rider Routing Map mPage (Mid-Fi) using Figma to enhance rider experience and operational clarity</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">Reverse Geocoding</span>
-                            <span class="tech-tag">Routing Optimization</span>
-                            <span class="tech-tag">Figma</span>
-                            <span class="tech-tag">Performance Engineering</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-chalkboard-teacher"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>GIS Analyst & Trainer</h3>
-                        <h4>Geospatial Campus</h4>
-                        <div class="experience-period">Nov 2024 - April 2025</div>
-                        <div class="experience-location">Nagercoil, Tamil Nadu, India</div>
-                        <p>Led geospatial technology training programs while architecting advanced field data collection platforms and offline-first mapping solutions.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Architected decentralized field data collection platform using PostGIS and FastAPI with AI validation model, reducing manual review time by 40%</li>
-                                <li>Engineered offline-first tile caching system with TileServer GL, ensuring 99% operational uptime for field teams in low-connectivity environments</li>
-                                <li>Trained and mentored 31 students on geospatial high-level and low-level design (HLD/LLD), covering system architecture and data pipelines</li>
-                                <li>Implemented modern open-source stack for geospatial applications</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">PostGIS</span>
-                            <span class="tech-tag">FastAPI</span>
-                            <span class="tech-tag">TileServer GL</span>
-                            <span class="tech-tag">PMTiles</span>
-                            <span class="tech-tag">Training & Mentoring</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>District Coordinator</h3>
-                        <h4>Rajiv Gandhi National Institute of Youth Development</h4>
-                        <div class="experience-period">Feb 2025</div>
-                        <div class="experience-location">Sriperumbudur, Tamil Nadu, India</div>
-                        <p>Executed high-accuracy geospatial census operations and data quality assurance for government infrastructure planning initiatives.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Architected and executed geospatial census for 437 households using KoboToolbox, ensuring 100% locational data integrity</li>
-                                <li>Identified 3 critical infrastructure deficiencies affecting 22% of population, informing Panchayat's Jal Jeevan Mission resource allocation</li>
-                                <li>Engineered QA/QC pipeline cross-validating survey data in SPSS with spatial layers in QGIS</li>
-                                <li>Achieved 95% reduction in entry errors by identifying and rectifying 50+ data anomalies</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">KoboToolbox</span>
-                            <span class="tech-tag">SPSS</span>
-                            <span class="tech-tag">QGIS</span>
-                            <span class="tech-tag">Data Quality Assurance</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-microscope"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>Pre Doctoral Fellow</h3>
-                        <h4>Indian Institute of Science (IISc)</h4>
-                        <div class="experience-period">Nov 2023 - Oct 2024</div>
-                        <div class="experience-location">Bengaluru, Karnataka, India</div>
-                        <p>Conducted advanced research in geospatial data science, developing novel CNN models for satellite imagery analysis and maternal health correlation studies.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Orchestrated data pipeline ingesting 10+ diverse datasets (Satellite, CPCB, OSM, DHS) using Prefect and PostGIS, improving data accessibility by 100%</li>
-                                <li>Engineered novel CNN model to downscale Sentinel-5P satellite imagery using CPCB ground data, enhancing localized AQI estimation accuracy by ~40%</li>
-                                <li>Developed React/FastAPI dashboard identifying 15% positive correlation between green space access and maternal health indicators</li>
-                                <li>Optimized system performance achieving p95 response times under 200ms for PostGIS queries and tile serving on low-resource cloud server</li>
-                                <li>Mentored 2 junior researchers in geospatial data science and agile project management</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">CNN Models</span>
-                            <span class="tech-tag">Sentinel-5P</span>
-                            <span class="tech-tag">React</span>
-                            <span class="tech-tag">FastAPI</span>
-                            <span class="tech-tag">Prefect</span>
-                            <span class="tech-tag">PostGIS</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>Project Intern</h3>
-                        <h4>Wildlife Institute of India</h4>
-                        <div class="experience-period">Jan 2023 - Oct 2023</div>
-                        <div class="experience-location">Dehradun, Uttarakhand, India</div>
-                        <p>Developed geospatial models for wildlife conservation initiatives, focusing on distribution analysis and environmental impact assessment.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Developed geospatial models using R and Python to assess wildlife distribution and environmental impact for conservation initiatives</li>
-                                <li>Prepared detailed reports and collaborated with ecologists to ensure compliance with regulatory standards</li>
-                                <li>Applied statistical modeling techniques for habitat suitability analysis</li>
-                                <li>Contributed to biodiversity conservation planning and policy recommendations</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">R</span>
-                            <span class="tech-tag">Python</span>
-                            <span class="tech-tag">Wildlife Modeling</span>
-                            <span class="tech-tag">Conservation Planning</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="experience-item">
-                    <div class="experience-icon">
-                        <i class="fas fa-gavel"></i>
-                    </div>
-                    <div class="experience-content">
-                        <h3>Business Analyst - Geospatial</h3>
-                        <h4>High Court of Judicature at Madras</h4>
-                        <div class="experience-period">Jul 2020 - Dec 2022</div>
-                        <div class="experience-location">Madurai, Tamil Nadu, India (Hybrid)</div>
-                        <p>Provided geospatial expertise for civil litigation cases, conducting field surveys and creating detailed cadastral maps for legal proceedings.</p>
-                        <div class="achievements">
-                            <h5>Key Achievements:</h5>
-                            <ul>
-                                <li>Conducted on-site field surveys and land measurements for civil litigation cases, gathering precise geospatial evidence for court proceedings</li>
-                                <li>Created detailed cadastral maps, boundary plots, and site plan visualizations using QGIS to support legal arguments</li>
-                                <li>Provided clear spatial context for judges and advocates through professional cartographic products</li>
-                                <li>Managed complete geospatial data lifecycle for Civil Chamber—from field collection to analysis and map production</li>
-                            </ul>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech-tag">Field Surveying</span>
-                            <span class="tech-tag">QGIS</span>
-                            <span class="tech-tag">Cadastral Mapping</span>
-                            <span class="tech-tag">Legal GIS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Projects Page -->
-    <div id="projects-page" class="page-container">
-        <div class="page-header">
-            <h1>Featured Projects</h1>
-            <p>Innovative geospatial solutions and technical implementations</p>
-        </div>
-        <div class="container">
-            <div class="projects-grid">
-                <div class="project-card featured">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-database"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="project-status">Featured</div>
-                    </div>
-                    <h3>Decentralized Field Data Collection & Validation Platform</h3>
-                    <p>Enables reliable, offline-capable data syncing and AI-assisted validation for teams in connectivity-poor disaster zones.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">99%</span>
-                            <span class="metric-label">Uptime</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">40%</span>
-                            <span class="metric-label">Review Time Reduction</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">AI</span>
-                            <span class="metric-label">Validation</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">PostGIS</span>
-                        <span class="tech-tag">FastAPI</span>
-                        <span class="tech-tag">AI Validation</span>
-                        <span class="tech-tag">Offline-First</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-wind"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-wind"></i>
-                        </div>
-                    </div>
-                    <h3>Fengal Cyclone Impact Analysis Using Panel Data in Tamil Nadu</h3>
-                    <p>Analyze the socio-economic impact of cyclones in Tamil Nadu to optimize disaster relief allocation.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">Panel</span>
-                            <span class="metric-label">Data Analysis</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">TN</span>
-                            <span class="metric-label">State Coverage</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Panel Data</span>
-                        <span class="tech-tag">Impact Analysis</span>
-                        <span class="tech-tag">Disaster Relief</span>
-                        <span class="tech-tag">Socio-Economic</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-city"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-city"></i>
-                        </div>
-                    </div>
-                    <h3>Deciphering City Outcomes through Data Exploration - DeCODE Challenge 2023</h3>
-                    <p>Conducted exploratory data analysis and provided insights on city outcomes for urban planning optimization.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">2023</span>
-                            <span class="metric-label">Challenge</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">EDA</span>
-                            <span class="metric-label">Analysis</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Data Exploration</span>
-                        <span class="tech-tag">Urban Analytics</span>
-                        <span class="tech-tag">City Outcomes</span>
-                        <span class="tech-tag">Insights</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-elephant"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-elephant"></i>
-                        </div>
-                    </div>
-                    <h3>Dulung - Subansiri Rapid Elephant Assessment</h3>
-                    <p>Assessed the impact of dam infrastructure projects on elephant populations using rapid assessment methodologies.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">Rapid</span>
-                            <span class="metric-label">Assessment</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Dam</span>
-                            <span class="metric-label">Impact Study</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Wildlife Assessment</span>
-                        <span class="tech-tag">Infrastructure Impact</span>
-                        <span class="tech-tag">Elephant Ecology</span>
-                        <span class="tech-tag">Conservation</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-frog"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-frog"></i>
-                        </div>
-                    </div>
-                    <h3>Development of the 'HerpetoGIS' Plugins Suite for EIA in Critical Forest Habitats</h3>
-                    <p>Development of an integrated suite of 20 novel QGIS plugins to address critical gaps in ecological survey for herpetofauna.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">20</span>
-                            <span class="metric-label">QGIS Plugins</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">EIA</span>
-                            <span class="metric-label">Application</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">QGIS Plugins</span>
-                        <span class="tech-tag">Herpetofauna</span>
-                        <span class="tech-tag">EIA</span>
-                        <span class="tech-tag">Forest Habitats</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-industry"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-industry"></i>
-                        </div>
-                    </div>
-                    <h3>Wildlife Management Plan for Naini Coal Mines, Odisha</h3>
-                    <p>Assessed ecological impacts of the coal mine block and developed comprehensive wildlife management strategies.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">Coal</span>
-                            <span class="metric-label">Mine Assessment</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Odisha</span>
-                            <span class="metric-label">Location</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Ecological Impact</span>
-                        <span class="tech-tag">Wildlife Management</span>
-                        <span class="tech-tag">Mining</span>
-                        <span class="tech-tag">Conservation Plan</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-pig"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-pig"></i>
-                        </div>
-                    </div>
-                    <h3>Modelling Distribution of Wild Pig and its Conflict Vulnerability in Tamil Nadu</h3>
-                    <p>Modeled the distribution of wild pigs in Tamil Nadu and prepared vulnerability maps for human-wildlife conflict management.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">TN</span>
-                            <span class="metric-label">State Coverage</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Conflict</span>
-                            <span class="metric-label">Vulnerability</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Species Distribution</span>
-                        <span class="tech-tag">Conflict Mapping</span>
-                        <span class="tech-tag">Vulnerability Analysis</span>
-                        <span class="tech-tag">Wildlife Management</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-smog"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-smog"></i>
-                        </div>
-                    </div>
-                    <h3>Geospatial Approach to Study Air Quality Index</h3>
-                    <p>Prepared geospatial analysis of air quality across Tamil Nadu and developed a comprehensive dashboard for India.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">AQI</span>
-                            <span class="metric-label">Analysis</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">India</span>
-                            <span class="metric-label">Dashboard</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Air Quality</span>
-                        <span class="tech-tag">Geospatial Analysis</span>
-                        <span class="tech-tag">Dashboard</span>
-                        <span class="tech-tag">Environmental</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-tint"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-tint"></i>
-                        </div>
-                    </div>
-                    <h3>Groundwater Potential Zone Mapping of Gadilam River Basin</h3>
-                    <p>Prepared mapping of groundwater potential zones based on weightage analysis for water resource management.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">Basin</span>
-                            <span class="metric-label">Scale Analysis</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Potential</span>
-                            <span class="metric-label">Zone Mapping</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Groundwater</span>
-                        <span class="tech-tag">Potential Mapping</span>
-                        <span class="tech-tag">Weightage Analysis</span>
-                        <span class="tech-tag">Water Resources</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-microscope"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-microscope"></i>
-                        </div>
-                    </div>
-                    <h3>Petrography Study of Rockfort Trichy</h3>
-                    <p>Led team in sample collection, microscopic sample preparation, and detailed petrographic analysis of rock formations.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">Team</span>
-                            <span class="metric-label">Leadership</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Micro</span>
-                            <span class="metric-label">Analysis</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Petrography</span>
-                        <span class="tech-tag">Sample Collection</span>
-                        <span class="tech-tag">Microscopy</span>
-                        <span class="tech-tag">Rock Analysis</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                    </div>
-                    <h3>Geochemical Data Exploration and Classification Using Earth MRI Dataset</h3>
-                    <p>Worked on data cleaning, developed classification algorithms, and reported findings from Earth MRI geochemical data.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">MRI</span>
-                            <span class="metric-label">Dataset</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">ML</span>
-                            <span class="metric-label">Classification</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Geochemical Data</span>
-                        <span class="tech-tag">Data Cleaning</span>
-                        <span class="tech-tag">Classification</span>
-                        <span class="tech-tag">Earth MRI</span>
-                    </div>
-                </div>
-                
-                <div class="project-card">
-                    <div class="project-image">
-                        <div class="project-image-placeholder">
-                            <i class="fas fa-water"></i>
-                            <span>Project Image Coming Soon</span>
-                        </div>
-                    </div>
-                    <div class="project-header">
-                        <div class="project-icon">
-                            <i class="fas fa-water"></i>
-                        </div>
-                    </div>
-                    <h3>Jal Jeevan Mission - Sample Survey</h3>
-                    <p>Conducted data collection with 5 enumerators, managed timelines, ensured dataset quality, and facilitated focus group discussions.</p>
-                    <div class="project-metrics">
-                        <div class="metric">
-                            <span class="metric-value">5</span>
-                            <span class="metric-label">Enumerators</span>
-                        </div>
-                        <div class="metric">
-                            <span class="metric-value">Quality</span>
-                            <span class="metric-label">Assurance</span>
-                        </div>
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-tag">Survey Management</span>
-                        <span class="tech-tag">Data Collection</span>
-                        <span class="tech-tag">Quality Control</span>
-                        <span class="tech-tag">Jal Jeevan Mission</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Publications Page -->
-    <div id="publications-page" class="page-container">
-        <div class="page-header">
-            <h1>Publications & Research</h1>
-            <p>Academic contributions and research publications in geospatial sciences</p>
-        </div>
-        <div class="container">
-            <div class="coming-soon">
-                <div class="coming-soon-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-                <h2>Publications Coming Soon</h2>
-                <p>I'm currently working on several research papers and publications in geospatial technology and data science. This section will showcase:</p>
-                
-                <div class="publication-preview">
-                    <div class="preview-grid">
-                        <div class="preview-item">
-                            <i class="fas fa-satellite"></i>
-                            <h4>Remote Sensing Applications</h4>
-                            <p>Research on satellite imagery analysis and environmental monitoring</p>
-                        </div>
-                        <div class="preview-item">
-                            <i class="fas fa-brain"></i>
-                            <h4>AI in Geospatial Analytics</h4>
-                            <p>Machine learning approaches for spatial pattern recognition</p>
-                        </div>
-                        <div class="preview-item">
-                            <i class="fas fa-database"></i>
-                            <h4>Geospatial Data Engineering</h4>
-                            <p>Scalable architectures for spatial data processing</p>
-                        </div>
-                        <div class="preview-item">
-                            <i class="fas fa-chart-line"></i>
-                            <h4>Urban Analytics</h4>
-                            <p>Data-driven approaches to urban planning and development</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="research-interests">
-                    <h3>Current Research Interests</h3>
-                    <div class="interests-list">
-                        <span class="interest-tag">Satellite Image Analysis</span>
-                        <span class="interest-tag">Urban Heat Islands</span>
-                        <span class="interest-tag">Air Quality Modeling</span>
-                        <span class="interest-tag">Wildlife Conservation</span>
-                        <span class="interest-tag">Disaster Management</span>
-                        <span class="interest-tag">Geospatial AI/ML</span>
-                        <span class="interest-tag">Smart Cities</span>
-                        <span class="interest-tag">Environmental Monitoring</span>
-                    </div>
-                </div>
-                
-                <div class="collaboration-note">
-                    <p><strong>Interested in collaboration?</strong> I'm always open to research partnerships and academic collaborations. Feel free to <a href="#" onclick="showPage('contact')" class="contact-link">get in touch</a> to discuss potential projects.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Certifications Page -->
-    <div id="certifications-page" class="page-container">
-        <div class="page-header">
-            <h1>Certifications & Training</h1>
-            <p>Professional development and continuous learning achievements</p>
-        </div>
-        <div class="container">
-            <div class="certifications-categories">
-                <div class="cert-category">
-                    <h3>Product Management & Analytics</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon google">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                            <h4>PM Fellowship in Product Management</h4>
-                            <p>Productspace</p>
-                            <div class="cert-date">2024</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon google">
-                                <i class="fas fa-analytics"></i>
-                            </div>
-                            <h4>Data Analytics Professional Certificate</h4>
-                            <p>Google</p>
-                            <div class="cert-date">March 2024</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Geospatial Technology & Remote Sensing</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-globe"></i>
-                            </div>
-                            <h4>Getting Started with CyberGIS</h4>
-                            <p>University of Illinois Urbana-Champaign</p>
-                            <div class="cert-date">February 2024</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon nasa">
-                                <i class="fas fa-satellite"></i>
-                            </div>
-                            <h4>Leveraging Earth Observation Technology for Sustainable Development</h4>
-                            <p>Mohammed Bin Rashid Space Centre</p>
-                            <div class="cert-date">February 2024</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon nasa">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <h4>Programming for Geospatial Professionals with Real Life Examples</h4>
-                            <p>Mohammed Bin Rashid Space Centre</p>
-                            <div class="cert-date">February 2024</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon nasa">
-                                <i class="fas fa-satellite-dish"></i>
-                            </div>
-                            <h4>Connecting Citizen Science with Remote Sensing</h4>
-                            <p>NASA</p>
-                            <div class="cert-date">January 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-city"></i>
-                            </div>
-                            <h4>Remote Sensing and GIS for Urban Studies and Environmental Modeling</h4>
-                            <p>Suresh Gyan Vihar University</p>
-                            <div class="cert-date">July 2022</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>GIS & Mapping Platforms</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-layer-group"></i>
-                            </div>
-                            <h4>Classifying Objects Using Deep Learning in ArcGIS Pro</h4>
-                            <p>Esri</p>
-                            <div class="cert-date">November 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-map"></i>
-                            </div>
-                            <h4>ArcGIS Pro Fundamentals</h4>
-                            <p>Esri</p>
-                            <div class="cert-date">September 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon un">
-                                <i class="fas fa-map-marked-alt"></i>
-                            </div>
-                            <h4>Create a Map in Minutes</h4>
-                            <p>UNICEF</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon un">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h4>Creating Effective Dashboards</h4>
-                            <p>UNICEF</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Development & Programming</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon microsoft">
-                                <i class="fab fa-github"></i>
-                            </div>
-                            <h4>Using GitHub Copilot with JavaScript</h4>
-                            <p>Microsoft</p>
-                            <div class="cert-date">December 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fab fa-python"></i>
-                            </div>
-                            <h4>Data Science and Python Programming for Geologists</h4>
-                            <p>Bharathidasan University</p>
-                            <div class="cert-date">2022</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Health & Data Analytics</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon who">
-                                <i class="fas fa-chart-pie"></i>
-                            </div>
-                            <h4>Go.Data: Building Additional Dashboards in Power BI</h4>
-                            <p>World Health Organization</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon who">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <h4>HHFA Data Analysis Platform</h4>
-                            <p>World Health Organization</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-hospital"></i>
-                            </div>
-                            <h4>Integrated Healthcare Management in China, Southeast and South Asia</h4>
-                            <p>Arizona State University</p>
-                            <div class="cert-date">April 2023</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Environmental & Biodiversity</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon un">
-                                <i class="fas fa-leaf"></i>
-                            </div>
-                            <h4>Spatial Data for Biodiversity</h4>
-                            <p>UNDP</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon un">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <h4>A Global Biodiversity Framework for Disaster and Climate Resilience</h4>
-                            <p>UNDRR</p>
-                            <div class="cert-date">March 2023</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Government & Policy</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon isro">
-                                <i class="fas fa-map-pin"></i>
-                            </div>
-                            <h4>Digitizing and Georeferencing India with Bhu-Aadhaar (ULPIN)</h4>
-                            <p>Ministry of Rural Development, GoI</p>
-                            <div class="cert-date">March 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-balance-scale"></i>
-                            </div>
-                            <h4>Intellectual Property Law Training</h4>
-                            <p>Department for Promotion of Industry and Internal Trade</p>
-                            <div class="cert-date">April 2023</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Professional Development</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-language"></i>
-                            </div>
-                            <h4>C1 Advanced Certificate</h4>
-                            <p>EF Education First</p>
-                            <div class="cert-date">October 2023</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-cogs"></i>
-                            </div>
-                            <h4>Lean Six Sigma White Belt Certification</h4>
-                            <p>The Lean Six Sigma Company</p>
-                            <div class="cert-date">July 2023</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cert-category">
-                    <h3>Industry Experience</h3>
-                    <div class="cert-grid">
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-industry"></i>
-                            </div>
-                            <h4>Inplant Trainee</h4>
-                            <p>The Ramco Cements Limited</p>
-                            <div class="cert-date">February 2020</div>
-                        </div>
-                        <div class="cert-card">
-                            <div class="cert-icon python">
-                                <i class="fas fa-gem"></i>
-                            </div>
-                            <h4>Mineral Targeting using Structural Controls and Geospatial Technology</h4>
-                            <p>Bharathidasan University</p>
-                            <div class="cert-date">2022</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Skills Page -->
-    <div id="skills-page" class="page-container">
-        <div class="page-header">
-            <h1>Technical Skills</h1>
-            <p>Comprehensive overview of geospatial and technical expertise</p>
-        </div>
-        <div class="container">
-            <div class="skills-categories">
-                <div class="skill-category">
-                    <h3><i class="fas fa-database"></i> Geospatial Data Engineering</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">GDAL</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">GeoPandas</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 92%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Apache Airflow</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Sedona & Spark</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-search"></i> Spatial Analysis (GEOINT)</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">QGIS</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Python (GeoPandas, Shapely)</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Apache Superset</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-brain"></i> Geospatial AI/ML</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">TensorFlow</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">PyTorch</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Rasterio</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 88%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Scikit-learn</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-server"></i> Geospatial Databases</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">PostGIS</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 92%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Trino</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 78%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">DuckDB</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">S3 & Azure Blob</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-code"></i> Geospatial Programming</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Python Development</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 95%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Leafmap</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Deck.gl</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 82%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-chart-line"></i> Data Visualization</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">QGIS Cartography</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Leaflet</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 88%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Deck.gl</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 82%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">Apache Superset</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="skill-category">
-                    <h3><i class="fas fa-file-alt"></i> Modern Data Formats</h3>
-                    <div class="skills-grid">
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">GeoParquet</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">GeoJSON</span>
-                                <span class="skill-level">Expert</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 92%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">COG (Cloud Optimized GeoTIFF)</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 88%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-item">
-                            <div class="skill-info">
-                                <span class="skill-name">PMTiles</span>
-                                <span class="skill-level">Advanced</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-progress" style="width: 80%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact Page -->
-    <div id="contact-page" class="page-container">
-        <div class="page-header">
-            <h1>Get In Touch</h1>
-            <p>Let's discuss geospatial solutions and collaboration opportunities</p>
-        </div>
-        <div class="container">
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Contact Information</h3>
-                    <div class="contact-methods">
-                        <div class="contact-method">
-                            <div class="contact-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>Email</h4>
-                                <p>thiruvenkatesh4@gmail.com</p>
-                                <a href="mailto:thiruvenkatesh4@gmail.com" class="contact-link">Send Email</a>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>Phone</h4>
-                                <p>+91 8300417685</p>
-                                <a href="tel:+918300417685" class="contact-link">Call Now</a>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">
-                                <i class="fab fa-linkedin"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>LinkedIn</h4>
-                                <p>Professional Network</p>
-                                <a href="https://www.linkedin.com/in/venkatesh-t-6b06ba357/" target="_blank" class="contact-link">View Profile</a>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-method">
-                            <div class="contact-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="contact-details">
-                                <h4>Location</h4>
-                                <p>Madurai, Tamil Nadu, India</p>
-                                <span class="contact-link">Available for Remote Work</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="contact-form-section">
-                    <h3>Send a Message</h3>
-                    <form class="contact-form" onsubmit="handleFormSubmit(event)">
-                        <div class="form-group">
-                            <label for="name">Full Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="company">Company/Organization</label>
-                            <input type="text" id="company" name="company">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <select id="subject" name="subject" required>
-                                <option value="">Select a topic</option>
-                                <option value="collaboration">Collaboration Opportunity</option>
-                                <option value="consulting">Geospatial Consulting</option>
-                                <option value="project">Project Discussion</option>
-                                <option value="research">Research Partnership</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="5" required placeholder="Tell me about your project or how I can help..."></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Send Message
-                        </button>
-                        
-                        <div class="form-note">
-                            <p><strong>Note:</strong> This is a demo contact form. Messages will open your default email client.</p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <div class="collaboration-areas">
-                <h3>Areas of Collaboration</h3>
-                <div class="collab-grid">
-                    <div class="collab-item">
-                        <i class="fas fa-satellite"></i>
-                        <h4>Satellite Data Analysis</h4>
-                        <p>Advanced processing and analysis of multi-spectral and hyperspectral imagery</p>
-                    </div>
-                    <div class="collab-item">
-                        <i class="fas fa-brain"></i>
-                        <h4>AI/ML Solutions</h4>
-                        <p>Machine learning applications for geospatial pattern recognition and prediction</p>
-                    </div>
-                    <div class="collab-item">
-                        <i class="fas fa-database"></i>
-                        <h4>Data Engineering</h4>
-                        <p>Scalable geospatial data pipelines and cloud infrastructure design</p>
-                    </div>
-                    <div class="collab-item">
-                        <i class="fas fa-chart-line"></i>
-                        <h4>Analytics Platforms</h4>
-                        <p>Interactive dashboards and visualization tools for spatial intelligence</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 Venkatesh T. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="mailto:thiruvenkatesh4@gmail.com">
-                    <i class="fas fa-envelope"></i> Email
+            <p class="summary">
+                GIS Analyst specializing in transforming complex spatial data into actionable intelligence and high-performance systems. Expert in the full geospatial stack, from building scalable data pipelines and AI models to developing interactive dashboards and maps.
+            </p>
+            <div class="cta-buttons">
+                <a href="mailto:thiruvenkatesh4@gmail.com" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> Get In Touch
                 </a>
-                <a href="https://www.linkedin.com/in/venkatesh-t-6b06ba357/" target="_blank">
+                <a href="https://www.linkedin.com/in/venkatesh-t-6b06ba357/" target="_blank" class="btn btn-secondary">
                     <i class="fab fa-linkedin"></i> LinkedIn
                 </a>
-                <a href="tel:+918300417685">
-                    <i class="fas fa-phone"></i> Phone
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Education Section -->
+    <section id="education" class="education">
+        <div class="container">
+            <h2 class="section-title">Education</h2>
+            <div class="education-grid">
+                <div class="education-card">
+                    <h3>Pre-Doctoral Fellowship</h3>
+                    <div class="institution">Indian Institute of Science (IISc)</div>
+                    <div class="duration">Nov 2023 - Oct 2024</div>
+                    <div class="location">Bengaluru, Karnataka, India</div>
+                    <p>Advanced research in geospatial data science and environmental health analytics</p>
+                </div>
+                <div class="education-card">
+                    <h3>Executive Certificate Programme in Corporate & Strategic Finance</h3>
+                    <div class="institution">Indian Institute of Management</div>
+                    <div class="duration">May 2024 - Present</div>
+                    <div class="location">Mumbai, India</div>
+                    <p>Strategic finance and corporate management for technology professionals</p>
+                </div>
+                <div class="education-card">
+                    <h3>Master of Technology (MTech), Geoinformatics</h3>
+                    <div class="institution">Bharathidasan University</div>
+                    <div class="duration">Jul 2021 - Jul 2023</div>
+                    <div class="location">Tiruchirappalli, Tamil Nadu, India</div>
+                    <p>Advanced geospatial technologies, remote sensing, and GIS applications</p>
+                </div>
+                <div class="education-card">
+                    <h3>Master's of Science (5 Year Integrated), Geology/Earth Science</h3>
+                    <div class="institution">Bharathidasan University</div>
+                    <div class="duration">2015 - 2020</div>
+                    <div class="location">Tiruchirappalli, Tamil Nadu, India</div>
+                    <p>Comprehensive study of earth sciences, geology, and geospatial applications</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience">
+        <div class="container">
+            <h2 class="section-title">Professional Experience</h2>
+            <div class="experience-grid">
+                <div class="experience-card">
+                    <h3>Product Operations Specialist</h3>
+                    <div class="company">Zepto HQ • May 2025 - July 2025</div>
+                    <div class="location">Bengaluru, Karnataka, India</div>
+                    <ul class="achievements">
+                        <li>Architected and productionized a reverse geocoding system for Zepto Maps, slashing address resolution latency by 5x (P99: 45ms, Avg: 20ms) versus Google Geocoder (P99: 250ms, Avg: 140ms)</li>
+                        <li>Expanded serviceable area by preparing the Master Geodatabase, increasing order coverage via polygons from 14</li>
+                        <li>Optimized routing algorithms, reducing Last-Mile + Last-Leg-Mile (LM + LLM) time by 16 seconds (P90: 44 seconds) and cutting delivery distance by 8.1</li>
+                        <li>Designed the Rider Routing Map mPage (Mid-Fi) using Figma to enhance rider experience and operational clarity</li>
+                    </ul>
+                </div>
+                <div class="experience-card">
+                    <h3>GIS Analyst & Trainer</h3>
+                    <div class="company">Geospatial Campus • Nov 2024 - April 2025</div>
+                    <div class="location">Nagercoil, Tamil Nadu, India</div>
+                    <ul class="achievements">
+                        <li>Architected a decentralized field data collection platform using PostGIS and FastAPI, integrating an AI validation model that automated quality checks and reduced manual review time by 40%</li>
+                        <li>Engineered an offline-first tile caching system with TileServer GL, ensuring 99% operational uptime for field teams in low-connectivity environments</li>
+                        <li>Trained and mentored 31 students on geospatial high-level and low-level design (HLD/LLD), covering system architecture, data pipelines, and modern open-source stack implementation</li>
+                    </ul>
+                </div>
+                <div class="experience-card">
+                    <h3>District Coordinator</h3>
+                    <div class="company">Rajiv Gandhi National Institute of Youth Development • Feb 2025</div>
+                    <div class="location">Sriperumbudur, Tamil Nadu, India</div>
+                    <ul class="achievements">
+                        <li>Architected and executed a high-accuracy geospatial census for 437 households using KoboToolbox, ensuring 100% locational data integrity</li>
+                        <li>Pinpointed 3 critical infrastructure deficiencies affecting 22% of the population, directly informing the Panchayat's resource allocation strategy for the Jal Jeevan Mission survey</li>
+                        <li>Engineered the QA/QC pipeline by cross-validating survey data in SPSS with spatial layers in QGIS, achieving a 95% reduction in entry errors</li>
+                    </ul>
+                </div>
+                <div class="experience-card">
+                    <h3>Pre Doctoral Fellow</h3>
+                    <div class="company">Indian Institute of Science (IISc) • Nov 2023 - Oct 2024</div>
+                    <div class="location">Bengaluru, Karnataka, India</div>
+                    <ul class="achievements">
+                        <li>Orchestrated a data pipeline ingesting 10+ diverse datasets (Satellite, CPCB, OSM, DHS) using Prefect and PostGIS, improving data accessibility for research by 100%</li>
+                        <li>Engineered a novel CNN model to downscale Sentinel-5P satellite imagery using CPCB ground data, enhancing localized AQI estimation accuracy by ~40%</li>
+                        <li>Developed and deployed a React/FastAPI dashboard, identifying a 15% positive correlation between green space access and positive maternal health indicators</li>
+                        <li>Optimized system performance on a low-resource cloud server, achieving p95 response times under 200ms for PostGIS queries and tile serving</li>
+                        <li>Mentored 2 junior researchers in geospatial data science and agile project management</li>
+                    </ul>
+                </div>
+                <div class="experience-card">
+                    <h3>Project Intern</h3>
+                    <div class="company">Wildlife Institute of India • Jan 2023 - Oct 2023</div>
+                    <div class="location">Dehradun, Uttarakhand, India</div>
+                    <ul class="achievements">
+                        <li>Developed geospatial models using R and Python to assess wildlife distribution and environmental impact for conservation initiatives</li>
+                        <li>Prepared detailed reports and collaborated with ecologists to ensure compliance with regulatory standards</li>
+                    </ul>
+                </div>
+                <div class="experience-card">
+                    <h3>Business Analyst - Geospatial</h3>
+                    <div class="company">High Court of Judicature at Madras • Jul 2020 - Dec 2022</div>
+                    <div class="location">Madurai, Tamil Nadu, India (Hybrid)</div>
+                    <ul class="achievements">
+                        <li>Conducted on-site field surveys and land measurements for civil litigation cases, gathering precise geospatial evidence for court proceedings</li>
+                        <li>Created detailed cadastral maps, boundary plots, and site plan visualizations using QGIS to support legal arguments and provide clear spatial context for judges and advocates</li>
+                        <li>Managed the geospatial data lifecycle for the Civil Chamber—from field data collection and digitization to analysis and map production</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+        <div class="container">
+            <h2 class="section-title">Technical Expertise</h2>
+            <div class="skills-grid">
+                <div class="skills-chart">
+                    <canvas id="skillsChart"></canvas>
+                </div>
+                <div class="skills-categories">
+                    <div class="skill-category">
+                        <h4>Geospatial Data Engineering</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">GDAL</div>
+                            <div class="skill-tag">GeoPandas</div>
+                            <div class="skill-tag">Apache Airflow</div>
+                            <div class="skill-tag">Sedona</div>
+                            <div class="skill-tag">Apache Spark</div>
+                            <div class="skill-tag">PostGIS</div>
+                            <div class="skill-tag">Distributed Processing</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Spatial Analysis (GEOINT)</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">QGIS</div>
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">GeoPandas</div>
+                            <div class="skill-tag">Shapely</div>
+                            <div class="skill-tag">Apache Superset</div>
+                            <div class="skill-tag">Spatial Modeling</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Geospatial AI/ML</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">TensorFlow</div>
+                            <div class="skill-tag">PyTorch</div>
+                            <div class="skill-tag">Rasterio</div>
+                            <div class="skill-tag">Scikit-learn</div>
+                            <div class="skill-tag">Machine Learning</div>
+                            <div class="skill-tag">Computer Vision</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Geospatial Databases</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">PostGIS</div>
+                            <div class="skill-tag">Trino</div>
+                            <div class="skill-tag">DuckDB</div>
+                            <div class="skill-tag">AWS S3</div>
+                            <div class="skill-tag">Azure Blob</div>
+                            <div class="skill-tag">Cloud Storage</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Geospatial Programming</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">GeoPandas</div>
+                            <div class="skill-tag">Rasterio</div>
+                            <div class="skill-tag">Leafmap</div>
+                            <div class="skill-tag">Deck.gl</div>
+                            <div class="skill-tag">Web Maps</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Data Visualization</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">QGIS Cartography</div>
+                            <div class="skill-tag">Leaflet</div>
+                            <div class="skill-tag">Deck.gl</div>
+                            <div class="skill-tag">Apache Superset</div>
+                            <div class="skill-tag">Interactive Maps</div>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Data Formats</h4>
+                        <div class="skills-tags">
+                            <div class="skill-tag">GeoParquet</div>
+                            <div class="skill-tag">GeoJSON</div>
+                            <div class="skill-tag">COG</div>
+                            <div class="skill-tag">PMTiles</div>
+                            <div class="skill-tag">Modern Formats</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Decentralized Field Data Collection & Validation Platform</h3>
+                        <div class="tech-stack">PostGIS • FastAPI • TileServer GL • AI/ML</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Enables reliable, offline-capable data syncing and AI-assisted validation for teams in connectivity-poor disaster zones.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">99%</div>
+                                <div class="metric-label">Uptime</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">40%</div>
+                                <div class="metric-label">Review Time Saved</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">AI</div>
+                                <div class="metric-label">Validation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Fengal Cyclone Impact Analysis Using Panel Data</h3>
+                        <div class="tech-stack">Python • QGIS • Statistical Analysis • GIS</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Analyze the socio-economic impact of cyclones in Tamil Nadu to optimize disaster relief allocation using advanced panel data techniques.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">TN</div>
+                                <div class="metric-label">State Coverage</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Panel</div>
+                                <div class="metric-label">Data Analysis</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Relief</div>
+                                <div class="metric-label">Optimization</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>HerpetoGIS Plugins Suite for EIA</h3>
+                        <div class="tech-stack">QGIS • Python • Plugin Development • Ecology</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Development of an integrated suite of 20 novel QGIS plugins to address critical gaps in ecological survey for herpetofauna in forest habitats.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">20</div>
+                                <div class="metric-label">QGIS Plugins</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">EIA</div>
+                                <div class="metric-label">Compliance</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Forest</div>
+                                <div class="metric-label">Habitats</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Wildlife Management Plan for Naini Coal Mines</h3>
+                        <div class="tech-stack">GIS • Environmental Assessment • Wildlife Analysis</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Assessed ecological impacts of the coal mine block and developed comprehensive wildlife management strategies for sustainable mining operations.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">Coal</div>
+                                <div class="metric-label">Mine Block</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Wildlife</div>
+                                <div class="metric-label">Management</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Odisha</div>
+                                <div class="metric-label">Location</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Wild Pig Distribution & Conflict Vulnerability Modeling</h3>
+                        <div class="tech-stack">R • Python • Species Distribution Modeling • GIS</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Modeled the distribution of wild pigs in Tamil Nadu and prepared vulnerability maps to predict and mitigate human-wildlife conflicts.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">TN</div>
+                                <div class="metric-label">State Coverage</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">SDM</div>
+                                <div class="metric-label">Modeling</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Conflict</div>
+                                <div class="metric-label">Prediction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Geospatial Air Quality Index Analysis</h3>
+                        <div class="tech-stack">Python • Dashboard Development • Spatial Analysis</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Prepared comprehensive geospatial analysis of air quality across Tamil Nadu and developed an interactive dashboard for India-wide AQI monitoring.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">India</div>
+                                <div class="metric-label">Coverage</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">AQI</div>
+                                <div class="metric-label">Analysis</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Dashboard</div>
+                                <div class="metric-label">Interactive</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>Groundwater Potential Zone Mapping</h3>
+                        <div class="tech-stack">GIS • Hydrological Modeling • Weightage Analysis</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Prepared comprehensive mapping of groundwater potential zones for Gadilam River Basin using advanced weightage-based analysis techniques.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">Gadilam</div>
+                                <div class="metric-label">River Basin</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Potential</div>
+                                <div class="metric-label">Zone Mapping</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">Weightage</div>
+                                <div class="metric-label">Analysis</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-header">
+                        <h3>DeCODE Challenge 2023 - City Outcomes Analysis</h3>
+                        <div class="tech-stack">Data Science • Exploratory Analysis • Urban Planning</div>
+                    </div>
+                    <div class="project-body">
+                        <p>Conducted comprehensive exploratory data analysis and provided actionable insights on city outcomes for urban planning and development strategies.</p>
+                        <div class="project-metrics">
+                            <div class="metric">
+                                <div class="metric-value">2023</div>
+                                <div class="metric-label">Challenge</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">City</div>
+                                <div class="metric-label">Outcomes</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value">EDA</div>
+                                <div class="metric-label">Analysis</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certifications Section -->
+    <section id="certifications" class="certifications">
+        <div class="container">
+            <h2 class="section-title">Certifications & Professional Development</h2>
+            <div class="certifications-grid">
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>PM Fellowship in Product Management</h3>
+                    <div class="cert-issuer">Productspace</div>
+                    <div class="cert-date">2024</div>
+                    <p>Comprehensive product management training focusing on strategy, execution, and leadership</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fab fa-google"></i>
+                    </div>
+                    <h3>Data Analytics Professional Certificate</h3>
+                    <div class="cert-issuer">Google</div>
+                    <div class="cert-date">March 2024</div>
+                    <p>Advanced data analytics, visualization, and statistical analysis techniques</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Getting Started with CyberGIS</h3>
+                    <div class="cert-issuer">University of Illinois Urbana-Champaign</div>
+                    <div class="cert-date">February 2024</div>
+                    <p>Cyberinfrastructure and computational approaches to geospatial analysis</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-satellite"></i>
+                    </div>
+                    <h3>Earth Observation for Sustainable Development</h3>
+                    <div class="cert-issuer">Mohammed Bin Rashid Space Centre</div>
+                    <div class="cert-date">February 2024</div>
+                    <p>Leveraging satellite technology for sustainable development in Bahrain</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Programming for Geospatial Professionals</h3>
+                    <div class="cert-issuer">Mohammed Bin Rashid Space Centre</div>
+                    <div class="cert-date">February 2024</div>
+                    <p>Real-world programming applications in geospatial analysis and development</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fab fa-microsoft"></i>
+                    </div>
+                    <h3>Using GitHub Copilot with JavaScript</h3>
+                    <div class="cert-issuer">Microsoft</div>
+                    <div class="cert-date">December 2023</div>
+                    <p>AI-assisted programming and modern development workflows</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Deep Learning in ArcGIS Pro</h3>
+                    <div class="cert-issuer">Esri</div>
+                    <div class="cert-date">November 2023</div>
+                    <p>Object classification using deep learning techniques in GIS</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>C1 Advanced Certificate</h3>
+                    <div class="cert-issuer">EF Education First</div>
+                    <div class="cert-date">October 2023</div>
+                    <p>Advanced English proficiency for professional communication</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <h3>ArcGIS Pro Fundamentals</h3>
+                    <div class="cert-issuer">Esri</div>
+                    <div class="cert-date">September 2023</div>
+                    <p>Core GIS analysis and cartographic design principles</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Creating Effective Dashboards</h3>
+                    <div class="cert-issuer">UNICEF</div>
+                    <div class="cert-date">July 2023</div>
+                    <p>Data visualization and dashboard design for humanitarian applications</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Go.Data: Building Dashboards in Power BI</h3>
+                    <div class="cert-issuer">World Health Organization</div>
+                    <div class="cert-date">July 2023</div>
+                    <p>Health data visualization and epidemiological dashboard development</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>HHFA Data Analysis Platform</h3>
+                    <div class="cert-issuer">World Health Organization</div>
+                    <div class="cert-date">July 2023</div>
+                    <p>Health facility assessment and data analysis methodologies</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Lean Six Sigma White Belt</h3>
+                    <div class="cert-issuer">The Lean Six Sigma Company</div>
+                    <div class="cert-date">July 2023</div>
+                    <p>Process improvement and quality management methodologies</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Spatial Data for Biodiversity</h3>
+                    <div class="cert-issuer">UNDP</div>
+                    <div class="cert-date">July 2023</div>
+                    <p>Geospatial analysis for biodiversity conservation and environmental monitoring</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <h3>Integrated Healthcare Management</h3>
+                    <div class="cert-issuer">Arizona State University</div>
+                    <div class="cert-date">April 2023</div>
+                    <p>Healthcare systems in China, Southeast and South Asia</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3>Intellectual Property Law Training</h3>
+                    <div class="cert-issuer">Department for Promotion of Industry and Internal Trade</div>
+                    <div class="cert-date">April 2023</div>
+                    <p>Legal frameworks for intellectual property protection and innovation</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Global Biodiversity Framework</h3>
+                    <div class="cert-issuer">UNDRR</div>
+                    <div class="cert-date">March 2023</div>
+                    <p>Disaster and climate resilience through biodiversity conservation</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Digitizing India with Bhu-Aadhaar (ULPIN)</h3>
+                    <div class="cert-issuer">Ministry of Rural Development, GoI</div>
+                    <div class="cert-date">March 2023</div>
+                    <p>Land digitization and georeferencing systems for rural development</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Citizen Science with Remote Sensing</h3>
+                    <div class="cert-issuer">NASA</div>
+                    <div class="cert-date">January 2023</div>
+                    <p>Connecting community science with satellite remote sensing applications</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <h3>Remote Sensing for Urban Studies</h3>
+                    <div class="cert-issuer">Suresh Gyan Vihar University</div>
+                    <div class="cert-date">July 2022</div>
+                    <p>GIS and remote sensing applications in urban planning and environmental modeling</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3>Inplant Trainee</h3>
+                    <div class="cert-issuer">The Ramco Cements Limited</div>
+                    <div class="cert-date">February 2020</div>
+                    <p>Industrial training in cement manufacturing and quality control processes</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3>Data Science for Geologists</h3>
+                    <div class="cert-issuer">Bharathidasan University</div>
+                    <div class="cert-date">2020</div>
+                    <p>Python programming and data science applications in geological studies</p>
+                </div>
+                <div class="cert-card">
+                    <div class="cert-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Mineral Targeting using Geospatial Technology</h3>
+                    <div class="cert-issuer">Bharathidasan University</div>
+                    <div class="cert-date">2020</div>
+                    <p>Structural controls and geospatial approaches to mineral exploration</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Let's Connect</h2>
+            <p class="section-subtitle">Ready to discuss geospatial solutions and opportunities</p>
+            <div class="contact-info">
+                <a href="tel:+918300417685" class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    +91 8300417685
+                </a>
+                <a href="mailto:thiruvenkatesh4@gmail.com" class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    thiruvenkatesh4@gmail.com
+                </a>
+                <a href="https://www.linkedin.com/in/venkatesh-t-6b06ba357/" target="_blank" class="contact-item">
+                    <i class="fab fa-linkedin"></i>
+                    LinkedIn Profile
                 </a>
             </div>
         </div>
-    </footer>
+    </section>
 
     <script>
-        // Simple navigation function using onclick
-        function showPage(pageId) {
-            // Hide all pages
-            const allPages = document.querySelectorAll('.page-container');
-            allPages.forEach(page => {
-                page.classList.remove('active');
+        // Smooth scrolling function
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
             });
-            
-            // Show target page
-            const targetPage = document.getElementById(pageId + '-page');
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // Update navigation active state
-            const allNavLinks = document.querySelectorAll('.nav-link');
-            allNavLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Find and activate the correct nav link
-            const navLinks = document.querySelectorAll('.nav-link');
-            const pages = ['home', 'education', 'experience', 'projects', 'publications', 'certifications', 'skills', 'contact'];
-            const pageIndex = pages.indexOf(pageId);
-            if (pageIndex !== -1 && navLinks[pageIndex]) {
-                navLinks[pageIndex].classList.add('active');
-            }
-            
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Contact form handler
-        function handleFormSubmit(event) {
-            event.preventDefault();
+
+
+        // Initialize skills chart
+        function initSkillsChart() {
+            const ctx = document.getElementById('skillsChart').getContext('2d');
             
-            const formData = new FormData(event.target);
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const company = formData.get('company');
-            const subject = formData.get('subject');
-            const message = formData.get('message');
-            
-            // Create mailto link
-            const mailtoLink = `mailto:thiruvenkatesh4@gmail.com?subject=${encodeURIComponent(subject + ' - ' + name)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\nCompany: ${company || 'Not specified'}\n\nMessage:\n${message}`)}`;
-            
-            // Open email client
-            window.location.href = mailtoLink;
-            
-            // Show success message
-            alert('Thank you for your message! Your email client should open now.');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        'Data Engineering',
+                        'Spatial Analysis',
+                        'Machine Learning',
+                        'Web Development',
+                        'Database Management',
+                        'Cloud Computing',
+                        'Visualization',
+                        'API Development'
+                    ],
+                    datasets: [{
+                        label: 'Expertise Level',
+                        data: [95, 90, 85, 80, 88, 75, 92, 82],
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        borderColor: 'var(--primary)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'var(--secondary)',
+                        pointBorderColor: 'var(--accent)',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                display: false
+                            },
+                            grid: {
+                                color: 'rgba(100, 116, 139, 0.3)'
+                            },
+                            angleLines: {
+                                color: 'rgba(100, 116, 139, 0.3)'
+                            },
+                            pointLabels: {
+                                color: 'var(--text-primary)',
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(248, 250, 252, 0.98)';
+            } else {
+                navbar.style.background = 'rgba(248, 250, 252, 0.95)';
+            }
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize skills chart
+            initSkillsChart();
+            
+            // Add animation classes to elements
+            const animatedElements = document.querySelectorAll('.experience-card, .project-card, .skill-tag, .cert-card, .education-card');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+
+            // Add hover effects to skill tags
+            const skillTags = document.querySelectorAll('.skill-tag');
+            skillTags.forEach(tag => {
+                tag.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) rotate(2deg)';
+                });
+                
+                tag.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                });
+            });
+        });
+
+        // Add typing effect to hero title
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+
+        // Initialize typing effect after a short delay
+        setTimeout(() => {
+            const heroTitle = document.querySelector('.hero h1');
+            if (heroTitle) {
+                typeWriter(heroTitle, 'Venkatesh T', 150);
+            }
+        }, 1000);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'976e0663046d9a99',t:'MTc1NjQ5MTIzNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'976e0d21c5059a99',t:'MTc1NjQ5MTUxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
