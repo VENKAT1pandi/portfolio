@@ -50,22 +50,3 @@ function handleFormSubmit(event) {
     // Show success message
     alert('Thank you for your message! Your email client should open now.');
 }
-
-// Initialize page on load
-document.addEventListener('DOMContentLoaded', function() {
-    // Show home page by default
-    showPage('home');
-    
-    // Add smooth scrolling for internal links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-});
